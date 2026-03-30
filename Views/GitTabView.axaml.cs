@@ -1223,14 +1223,12 @@ public partial class GitTabView : UserControl
             await ScrubTokenizedForkRemoteIfAny(repoDir, prog, ct);
 
             string remoteName;
-            string remoteUrlClean;
             string prHeadOwner;
 
             if (isUpstreamOwner)
             {
                 AppendLog("[mode] upstream owner detected -> no fork");
                 remoteName = "origin";
-                remoteUrlClean = RepoUrl;
                 prHeadOwner = UpstreamOwner;
             }
             else
@@ -1259,9 +1257,17 @@ public partial class GitTabView : UserControl
                 }
 
                 remoteName = "fork";
-                remoteUrlClean = $"https://github.com/{_githubLogin}/{UpstreamRepo}.git";
                 prHeadOwner = _githubLogin!;
             }
+
+            string remoteUrlClean = await ResolveIntegratedPrPushRemoteUrlAsync(
+                repoDir,
+                remoteName,
+                prHeadOwner,
+                UpstreamRepo,
+                requireSshRemote: !isUpstreamOwner,
+                prog,
+                ct);
 
             SetProgress("Configuring remote…");
             AppendLog("[step] remote " + remoteName + " -> " + remoteUrlClean);
@@ -1433,6 +1439,62 @@ public partial class GitTabView : UserControl
             // never block on cleanup
         }
     }
+
+    private async Task<string> ResolveIntegratedPrPushRemoteUrlAsync(
+        string repoDir,
+        string remoteName,
+        string owner,
+        string repo,
+        bool requireSshRemote,
+        IProgress<string> prog,
+        CancellationToken ct)
+    {
+        var existingRemoteUrl = await _git.GetRemoteUrlAsync(repoDir, remoteName, ct);
+        if (IsMatchingGitHubSshRemote(existingRemoteUrl, owner, repo))
+        {
+            prog.Report("[git] preserving SSH remote " + remoteName);
+            return existingRemoteUrl!.Trim();
+        }
+
+        if (!requireSshRemote && IsMatchingGitHubRemote(existingRemoteUrl, owner, repo))
+        {
+            prog.Report("[git] preserving existing remote " + remoteName);
+            return existingRemoteUrl!.Trim();
+        }
+
+        if (IsMatchingGitHubRemote(existingRemoteUrl, owner, repo))
+            prog.Report("[git] switching " + remoteName + " remote to SSH for PR push");
+
+        return BuildGitHubSshRemoteUrl(owner, repo);
+    }
+
+    private static string BuildGitHubSshRemoteUrl(string owner, string repo)
+        => $"git@github.com:{owner}/{repo}.git";
+
+    private static bool IsMatchingGitHubSshRemote(string? remoteUrl, string owner, string repo)
+        => BuildExpectedGitHubRemoteUrls(owner, repo)
+            .Where(u => u.StartsWith("git@github.com:", StringComparison.OrdinalIgnoreCase) ||
+                        u.StartsWith("ssh://git@github.com/", StringComparison.OrdinalIgnoreCase))
+            .Contains(NormalizeRemoteUrl(remoteUrl), StringComparer.OrdinalIgnoreCase);
+
+    private static bool IsMatchingGitHubRemote(string? remoteUrl, string owner, string repo)
+        => BuildExpectedGitHubRemoteUrls(owner, repo)
+            .Contains(NormalizeRemoteUrl(remoteUrl), StringComparer.OrdinalIgnoreCase);
+
+    private static IEnumerable<string> BuildExpectedGitHubRemoteUrls(string owner, string repo)
+    {
+        string repoPath = $"{owner}/{repo}";
+
+        yield return $"https://github.com/{repoPath}";
+        yield return $"https://github.com/{repoPath}.git";
+        yield return $"git@github.com:{repoPath}";
+        yield return $"git@github.com:{repoPath}.git";
+        yield return $"ssh://git@github.com/{repoPath}";
+        yield return $"ssh://git@github.com/{repoPath}.git";
+    }
+
+    private static string NormalizeRemoteUrl(string? remoteUrl)
+        => (remoteUrl ?? "").Trim().TrimEnd('/');
 
     private async Task SafeRestoreAsync(string repoDir, string originalBranch, IProgress<string> prog, CancellationToken ct)
     {
@@ -1768,13 +1830,11 @@ public partial class GitTabView : UserControl
             await ScrubTokenizedForkRemoteIfAny(repoDir, prog, ct);
 
             string remoteName;
-            string remoteUrlClean;
             string prHeadOwner;
 
             if (isUpstreamOwner)
             {
                 remoteName = "origin";
-                remoteUrlClean = RepoUrl;
                 prHeadOwner = UpstreamOwner;
                 AppendLog("[mode] upstream owner -> push to origin");
             }
@@ -1801,9 +1861,17 @@ public partial class GitTabView : UserControl
                 }
 
                 remoteName = "fork";
-                remoteUrlClean = $"https://github.com/{_githubLogin}/{UpstreamRepo}.git";
                 prHeadOwner = _githubLogin!;
             }
+
+            string remoteUrlClean = await ResolveIntegratedPrPushRemoteUrlAsync(
+                repoDir,
+                remoteName,
+                prHeadOwner,
+                UpstreamRepo,
+                requireSshRemote: !isUpstreamOwner,
+                prog,
+                ct);
 
             var rem = await _git.EnsureRemoteUrlAsync(repoDir, remoteName, remoteUrlClean, prog, ct);
             if (!rem.Success)
