@@ -6,6 +6,10 @@
 
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
+
+		<!-- Write packages.lock.json so restores stay deterministic and can be mirrored for offline validation -->
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
 		<InvariantGlobalization>true</InvariantGlobalization>
 
 		<ApplicationManifest>app.manifest</ApplicationManifest>
