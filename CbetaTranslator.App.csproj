@@ -6,6 +6,11 @@
 
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
+		<EnableDefaultItems>false</EnableDefaultItems>
+
+		<!-- Write packages.lock.json so restores stay deterministic and can be mirrored for offline validation -->
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
 		<InvariantGlobalization>true</InvariantGlobalization>
 
 		<ApplicationManifest>app.manifest</ApplicationManifest>
@@ -53,6 +58,194 @@
 			<IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
 			<PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
 		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="App.axaml.cs" />
+		<Compile Include="Infrastructure/AnnotationMarkerInserter.cs" />
+		<Compile Include="Infrastructure/AppPaths.Dictionary.cs" />
+		<Compile Include="Infrastructure/AppPaths.cs" />
+		<Compile Include="Infrastructure/AssistantPanelRenderer.cs" />
+		<Compile Include="Infrastructure/CedictLicenseService.cs" />
+		<Compile Include="Infrastructure/CommunityNoteXmlEditor.cs" />
+		<Compile Include="Infrastructure/HoverDictionaryBehavior.cs" />
+		<Compile Include="Infrastructure/HoverDictionaryBehaviorEdit.cs" />
+		<Compile Include="Infrastructure/HoverDictionaryBehaviorTextBox.cs" />
+		<Compile Include="Infrastructure/LbHelper.cs" />
+		<Compile Include="Messages/AppMessages.cs" />
+		<Compile Include="Models/AppConfig.cs" />
+		<Compile Include="Models/CedictModels.cs" />
+		<Compile Include="Models/CoocMetric.cs" />
+		<Compile Include="Models/CoocRow.cs" />
+		<Compile Include="Models/CorpusUsageHit.cs" />
+		<Compile Include="Models/CurrentProjectionSegmentChangedEventArgs.cs" />
+		<Compile Include="Models/DocAnnotation.cs" />
+		<Compile Include="Models/FileNavItem.cs" />
+		<Compile Include="Models/Filestamp.cs" />
+		<Compile Include="Models/IndexCache.cs" />
+		<Compile Include="Models/MasterDateEntry.cs" />
+		<Compile Include="Models/NavGroupMode.cs" />
+		<Compile Include="Models/NavTreeNode.cs" />
+		<Compile Include="Models/NavigationRequest.cs" />
+		<Compile Include="Models/PassageLink.cs" />
+		<Compile Include="Models/RenderSegment.cs" />
+		<Compile Include="Models/RenderedDocument.cs" />
+		<Compile Include="Models/ScholarPassage.cs" />
+		<Compile Include="Models/SearchModels.cs" />
+		<Compile Include="Models/TermbaseEntry.cs" />
+		<Compile Include="Models/TourStep.cs" />
+		<Compile Include="Models/TranslationAssistantModels.cs" />
+		<Compile Include="Models/TranslationReviewModels.cs" />
+		<Compile Include="Models/TranslationStatus.cs" />
+		<Compile Include="Models/TranslationUnit.cs" />
+		<Compile Include="Program.cs" />
+		<Compile Include="Services/AppConfigService.cs" />
+		<Compile Include="Services/BloomSearchIndexService.cs" />
+		<Compile Include="Services/CbetaUriParser.cs" />
+		<Compile Include="Services/CedictDictionaryService.cs" />
+		<Compile Include="Services/CjkMatchNormalizer.cs" />
+		<Compile Include="Services/CommunityDataService.cs" />
+		<Compile Include="Services/CooccurrenceService.cs" />
+		<Compile Include="Services/FileService.cs" />
+		<Compile Include="Services/GitBinaryLocator.cs" />
+		<Compile Include="Services/GitHubApiService.cs" />
+		<Compile Include="Services/GitHubAuthService.cs" />
+		<Compile Include="Services/GitRepoService.cs" />
+		<Compile Include="Services/GrammarReferenceService.cs" />
+		<Compile Include="Services/IAppConfigService.cs" />
+		<Compile Include="Services/IBloomSearchIndexService.cs" />
+		<Compile Include="Services/ICommunityDataService.cs" />
+		<Compile Include="Services/ICooccurrenceService.cs" />
+		<Compile Include="Services/IFileService.cs" />
+		<Compile Include="Services/IGitRepoService.cs" />
+		<Compile Include="Services/IGrammarReferenceService.cs" />
+		<Compile Include="Services/IIndexCacheService.cs" />
+		<Compile Include="Services/IIndexedTranslationService.cs" />
+		<Compile Include="Services/IMarkdownTranslationService.cs" />
+		<Compile Include="Services/IMasterDatesService.cs" />
+		<Compile Include="Services/IParallelPassageFinderService.cs" />
+		<Compile Include="Services/IRenderedDocumentCacheService.cs" />
+		<Compile Include="Services/IScholarCollectionsService.cs" />
+		<Compile Include="Services/IScholarExportService.cs" />
+		<Compile Include="Services/ISearchEngine.cs" />
+		<Compile Include="Services/ISearchIndexBuilder.cs" />
+		<Compile Include="Services/ISearchIndexService.cs" />
+		<Compile Include="Services/ISelectionSyncService.cs" />
+		<Compile Include="Services/ITermbaseService.cs" />
+		<Compile Include="Services/ITermbaseStorageService.cs" />
+		<Compile Include="Services/ITranslationAssistantBuildService.cs" />
+		<Compile Include="Services/ITranslationAssistantService.cs" />
+		<Compile Include="Services/ITranslationMemoryService.cs" />
+		<Compile Include="Services/ITranslationQaService.cs" />
+		<Compile Include="Services/ITranslationReviewService.cs" />
+		<Compile Include="Services/ITranslationStatusService.cs" />
+		<Compile Include="Services/IZenTextsService.cs" />
+		<Compile Include="Services/IndexCacheService.cs" />
+		<Compile Include="Services/IndexedTranslationService.cs" />
+		<Compile Include="Services/MarkdownTranslationService.cs" />
+		<Compile Include="Services/MasterDatesService.cs" />
+		<Compile Include="Services/OnboardingTourService.cs" />
+		<Compile Include="Services/ParallelPassageFinderService.cs" />
+		<Compile Include="Services/ProtocolRegistrationService.cs" />
+		<Compile Include="Services/RenderedDocumentCacheService.cs" />
+		<Compile Include="Services/ScholarCollectionsService.cs" />
+		<Compile Include="Services/ScholarExportService.cs" />
+		<Compile Include="Services/SearchEngine.cs" />
+		<Compile Include="Services/SearchIndexBuilder.cs" />
+		<Compile Include="Services/SearchIndexService.cs" />
+		<Compile Include="Services/SearchIndexSettings.cs" />
+		<Compile Include="Services/SelectionSyncService.cs" />
+		<Compile Include="Services/ServiceCollectionExtensions.cs" />
+		<Compile Include="Services/SingleInstanceManager.cs" />
+		<Compile Include="Services/TermbaseService.cs" />
+		<Compile Include="Services/TermbaseStorageService.cs" />
+		<Compile Include="Services/TranslationAssistantBuildService.cs" />
+		<Compile Include="Services/TranslationAssistantService.cs" />
+		<Compile Include="Services/TranslationMemoryService.cs" />
+		<Compile Include="Services/TranslationQAService.cs" />
+		<Compile Include="Services/TranslationReviewService.cs" />
+		<Compile Include="Services/TranslationStatusService.cs" />
+		<Compile Include="Services/VocabularyAnalysisService.cs" />
+		<Compile Include="Services/WindowNavigationService.cs" />
+		<Compile Include="Services/XmlReconciliationHelper.cs" />
+		<Compile Include="Services/ZenTextsService.cs" />
+		<Compile Include="Text/CbetaTeiRenderer.cs" />
+		<Compile Include="ViewModels/ComparePassagesViewModel.cs" />
+		<Compile Include="ViewModels/GitTabViewModel.cs" />
+		<Compile Include="ViewModels/LicensesWindowViewModel.cs" />
+		<Compile Include="ViewModels/MainWindowViewModel.cs" />
+		<Compile Include="ViewModels/ReadableTabViewModel.cs" />
+		<Compile Include="ViewModels/ScholarTabViewModel.cs" />
+		<Compile Include="ViewModels/SearchTabViewModel.cs" />
+		<Compile Include="ViewModels/SettingsWindowViewModel.cs" />
+		<Compile Include="ViewModels/TermbaseEditorWindowViewModel.cs" />
+		<Compile Include="ViewModels/TranslationTabViewModel.cs" />
+		<Compile Include="ViewModels/UsernamePromptWindowViewModel.cs" />
+		<Compile Include="ViewModels/ViewModelBase.cs" />
+		<Compile Include="Views/AnnotatedTextEditor.cs" />
+		<Compile Include="Views/AnnotationMarkerOverlay.cs" />
+		<Compile Include="Views/ComparePassagesWindow.axaml.cs" />
+		<Compile Include="Views/DeviceCodeDialog.axaml.cs" />
+		<Compile Include="Views/ExportFormatDialog.axaml.cs" />
+		<Compile Include="Views/GitTabView.axaml.cs" />
+		<Compile Include="Views/LicensesWindow.axaml.cs" />
+		<Compile Include="Views/MainWindow.axaml.cs" />
+		<Compile Include="Views/MasterDatesEditorDialog.axaml.cs" />
+		<Compile Include="Views/NavStatusToBrushConverter.cs" />
+		<Compile Include="Views/ReadableTabView.axaml.cs" />
+		<Compile Include="Views/ScholarTabView.axaml.cs" />
+		<Compile Include="Views/SearchHighlightOverlay.cs" />
+		<Compile Include="Views/SearchHighlightRenderer.cs" />
+		<Compile Include="Views/SearchTabView.axaml.cs" />
+		<Compile Include="Views/SettingsWindow.axaml.cs" />
+		<Compile Include="Views/TermbaseEditorWindow.axaml.cs" />
+		<Compile Include="Views/TourSpotlightOverlay.cs" />
+		<Compile Include="Views/TourTooltipPanel.axaml.cs" />
+		<Compile Include="Views/TranslationTabView.axaml.cs" />
+		<Compile Include="Views/UsernamePromptWindow.axaml.cs" />
+		<Compile Include="Views/VocabularyAnalysisDialog.axaml.cs" />
+	</ItemGroup>
+
+	<!-- Avalonia's default Windows-style glob can survive as a literal item on Linux. -->
+	<ItemGroup>
+		<AvaloniaXaml Remove="**\*.axaml" />
+		<AvaloniaXaml Remove="**/*.axaml" />
+		<AvaloniaXaml Remove="**\*.paml" />
+		<AvaloniaXaml Remove="**/*.paml" />
+		<AvaloniaXaml Include="App.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/ComparePassagesWindow.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/DeviceCodeDialog.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/ExportFormatDialog.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/GitTabView.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/LicensesWindow.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/MainWindow.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/MasterDatesEditorDialog.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/ReadableTabView.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/ScholarTabView.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/SearchTabView.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/SettingsWindow.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/TermbaseEditorWindow.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/TourTooltipPanel.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/TranslationTabView.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/UsernamePromptWindow.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/VocabularyAnalysisDialog.axaml" SubType="Designer" />
+		<None Remove="App.axaml" />
+		<None Remove="Views/ComparePassagesWindow.axaml" />
+		<None Remove="Views/DeviceCodeDialog.axaml" />
+		<None Remove="Views/ExportFormatDialog.axaml" />
+		<None Remove="Views/GitTabView.axaml" />
+		<None Remove="Views/LicensesWindow.axaml" />
+		<None Remove="Views/MainWindow.axaml" />
+		<None Remove="Views/MasterDatesEditorDialog.axaml" />
+		<None Remove="Views/ReadableTabView.axaml" />
+		<None Remove="Views/ScholarTabView.axaml" />
+		<None Remove="Views/SearchTabView.axaml" />
+		<None Remove="Views/SettingsWindow.axaml" />
+		<None Remove="Views/TermbaseEditorWindow.axaml" />
+		<None Remove="Views/TourTooltipPanel.axaml" />
+		<None Remove="Views/TranslationTabView.axaml" />
+		<None Remove="Views/UsernamePromptWindow.axaml" />
+		<None Remove="Views/VocabularyAnalysisDialog.axaml" />
 	</ItemGroup>
 
 	<!-- Ensure dictionary ships in BOTH build output AND publish output -->
