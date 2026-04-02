@@ -75,11 +75,14 @@
 		<Compile Include="Messages/AppMessages.cs" />
 		<Compile Include="Models/AppConfig.cs" />
 		<Compile Include="Models/CedictModels.cs" />
+		<Compile Include="Models/CompareTagsRequestData.cs" />
+		<Compile Include="Models/CompareTranslationsRequestData.cs" />
 		<Compile Include="Models/CoocMetric.cs" />
 		<Compile Include="Models/CoocRow.cs" />
 		<Compile Include="Models/CorpusUsageHit.cs" />
 		<Compile Include="Models/CurrentProjectionSegmentChangedEventArgs.cs" />
 		<Compile Include="Models/DocAnnotation.cs" />
+		<Compile Include="Models/DocumentTag.cs" />
 		<Compile Include="Models/FileNavItem.cs" />
 		<Compile Include="Models/Filestamp.cs" />
 		<Compile Include="Models/IndexCache.cs" />
@@ -92,6 +95,8 @@
 		<Compile Include="Models/RenderedDocument.cs" />
 		<Compile Include="Models/ScholarPassage.cs" />
 		<Compile Include="Models/SearchModels.cs" />
+		<Compile Include="Models/TagDefinition.cs" />
+		<Compile Include="Models/TagVocabulary.cs" />
 		<Compile Include="Models/TermbaseEntry.cs" />
 		<Compile Include="Models/TourStep.cs" />
 		<Compile Include="Models/TranslationAssistantModels.cs" />
@@ -100,12 +105,12 @@
 		<Compile Include="Models/TranslationUnit.cs" />
 		<Compile Include="Program.cs" />
 		<Compile Include="Services/AppConfigService.cs" />
-		<Compile Include="Services/BloomSearchIndexService.cs" />
 		<Compile Include="Services/CbetaUriParser.cs" />
 		<Compile Include="Services/CedictDictionaryService.cs" />
 		<Compile Include="Services/CjkMatchNormalizer.cs" />
 		<Compile Include="Services/CommunityDataService.cs" />
 		<Compile Include="Services/CooccurrenceService.cs" />
+		<Compile Include="Services/DocumentTagService.cs" />
 		<Compile Include="Services/FileService.cs" />
 		<Compile Include="Services/GitBinaryLocator.cs" />
 		<Compile Include="Services/GitHubApiService.cs" />
@@ -113,9 +118,9 @@
 		<Compile Include="Services/GitRepoService.cs" />
 		<Compile Include="Services/GrammarReferenceService.cs" />
 		<Compile Include="Services/IAppConfigService.cs" />
-		<Compile Include="Services/IBloomSearchIndexService.cs" />
 		<Compile Include="Services/ICommunityDataService.cs" />
 		<Compile Include="Services/ICooccurrenceService.cs" />
+		<Compile Include="Services/IDocumentTagService.cs" />
 		<Compile Include="Services/IFileService.cs" />
 		<Compile Include="Services/IGitRepoService.cs" />
 		<Compile Include="Services/IGrammarReferenceService.cs" />
@@ -185,6 +190,8 @@
 		<Compile Include="Views/AnnotatedTextEditor.cs" />
 		<Compile Include="Views/AnnotationMarkerOverlay.cs" />
 		<Compile Include="Views/ComparePassagesWindow.axaml.cs" />
+		<Compile Include="Views/CompareTagsWindow.axaml.cs" />
+		<Compile Include="Views/CompareTranslationsWindow.axaml.cs" />
 		<Compile Include="Views/DeviceCodeDialog.axaml.cs" />
 		<Compile Include="Views/ExportFormatDialog.axaml.cs" />
 		<Compile Include="Views/GitTabView.axaml.cs" />
@@ -198,6 +205,7 @@
 		<Compile Include="Views/SearchHighlightRenderer.cs" />
 		<Compile Include="Views/SearchTabView.axaml.cs" />
 		<Compile Include="Views/SettingsWindow.axaml.cs" />
+		<Compile Include="Views/TagEditorWindow.axaml.cs" />
 		<Compile Include="Views/TermbaseEditorWindow.axaml.cs" />
 		<Compile Include="Views/TourSpotlightOverlay.cs" />
 		<Compile Include="Views/TourTooltipPanel.axaml.cs" />
@@ -214,6 +222,8 @@
 		<AvaloniaXaml Remove="**/*.paml" />
 		<AvaloniaXaml Include="App.axaml" SubType="Designer" />
 		<AvaloniaXaml Include="Views/ComparePassagesWindow.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/CompareTagsWindow.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/CompareTranslationsWindow.axaml" SubType="Designer" />
 		<AvaloniaXaml Include="Views/DeviceCodeDialog.axaml" SubType="Designer" />
 		<AvaloniaXaml Include="Views/ExportFormatDialog.axaml" SubType="Designer" />
 		<AvaloniaXaml Include="Views/GitTabView.axaml" SubType="Designer" />
@@ -224,6 +234,7 @@
 		<AvaloniaXaml Include="Views/ScholarTabView.axaml" SubType="Designer" />
 		<AvaloniaXaml Include="Views/SearchTabView.axaml" SubType="Designer" />
 		<AvaloniaXaml Include="Views/SettingsWindow.axaml" SubType="Designer" />
+		<AvaloniaXaml Include="Views/TagEditorWindow.axaml" SubType="Designer" />
 		<AvaloniaXaml Include="Views/TermbaseEditorWindow.axaml" SubType="Designer" />
 		<AvaloniaXaml Include="Views/TourTooltipPanel.axaml" SubType="Designer" />
 		<AvaloniaXaml Include="Views/TranslationTabView.axaml" SubType="Designer" />
@@ -231,6 +242,8 @@
 		<AvaloniaXaml Include="Views/VocabularyAnalysisDialog.axaml" SubType="Designer" />
 		<None Remove="App.axaml" />
 		<None Remove="Views/ComparePassagesWindow.axaml" />
+		<None Remove="Views/CompareTagsWindow.axaml" />
+		<None Remove="Views/CompareTranslationsWindow.axaml" />
 		<None Remove="Views/DeviceCodeDialog.axaml" />
 		<None Remove="Views/ExportFormatDialog.axaml" />
 		<None Remove="Views/GitTabView.axaml" />
@@ -241,6 +254,7 @@
 		<None Remove="Views/ScholarTabView.axaml" />
 		<None Remove="Views/SearchTabView.axaml" />
 		<None Remove="Views/SettingsWindow.axaml" />
+		<None Remove="Views/TagEditorWindow.axaml" />
 		<None Remove="Views/TermbaseEditorWindow.axaml" />
 		<None Remove="Views/TourTooltipPanel.axaml" />
 		<None Remove="Views/TranslationTabView.axaml" />

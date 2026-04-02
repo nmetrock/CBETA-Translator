@@ -2,13 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-LOCK_FILE="${1:-$ROOT/packages.lock.json}"
 FEED_DIR="${2:-$ROOT/vendor/nuget-feed}"
-
-if [[ ! -f "$LOCK_FILE" ]]; then
-  echo "Lock file not found: $LOCK_FILE" >&2
-  exit 1
-fi
 
 mkdir -p "$FEED_DIR"
 
@@ -25,16 +19,48 @@ need_cmd curl
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-echo "Reading locked packages from: $LOCK_FILE"
+LOCK_FILES=()
+if [[ $# -ge 1 && -n "${1:-}" ]]; then
+  LOCK_FILES+=("$1")
+else
+  while IFS= read -r lock_file; do
+    LOCK_FILES+=("$lock_file")
+  done < <(find "$ROOT" \
+    -path "$ROOT/bin" -prune -o \
+    -path "$ROOT/obj" -prune -o \
+    -path "$ROOT/vendor" -prune -o \
+    -name 'packages.lock.json' -print | sort)
+fi
+
+if [[ "${#LOCK_FILES[@]}" -eq 0 ]]; then
+  echo "No lock files found under: $ROOT" >&2
+  exit 1
+fi
+
+for lock_file in "${LOCK_FILES[@]}"; do
+  if [[ ! -f "$lock_file" ]]; then
+    echo "Lock file not found: $lock_file" >&2
+    exit 1
+  fi
+done
+
+echo "Reading locked packages from:"
+for lock_file in "${LOCK_FILES[@]}"; do
+  echo "  $lock_file"
+done
 echo "Writing offline feed to:      $FEED_DIR"
 
-jq -r '
-  .dependencies
-  | to_entries[]
-  | .value
-  | to_entries[]
-  | "\(.key)\t\(.value.resolved)\t\(.value.type)"
-' "$LOCK_FILE" | sort -f -u > "$TMP_DIR/packages.tsv"
+: > "$TMP_DIR/packages.tsv"
+for lock_file in "${LOCK_FILES[@]}"; do
+  jq -r '
+    .dependencies
+    | to_entries[]
+    | .value
+    | to_entries[]
+    | "\(.key)\t\(.value.resolved)\t\(.value.type)"
+  ' "$lock_file" >> "$TMP_DIR/packages.tsv"
+done
+sort -f -u -o "$TMP_DIR/packages.tsv" "$TMP_DIR/packages.tsv"
 
 TOTAL="$(wc -l < "$TMP_DIR/packages.tsv" | tr -d " ")"
 if [[ "$TOTAL" == "0" ]]; then
@@ -104,24 +130,33 @@ while IFS=$'\t' read -r package_id version package_type; do
   fi
 done < "$TMP_DIR/packages.tsv"
 
-jq '
+LOCK_FILES_JSON="$(printf '%s\n' "${LOCK_FILES[@]}" | jq -R . | jq -s .)"
+
+jq -n \
+  --argjson sourceLockFiles "$LOCK_FILES_JSON" \
+  --slurpfile lockfiles "${LOCK_FILES[@]}" '
   {
     generatedAtUtc: (now | todateiso8601),
-    sourceLockFile: input_filename,
-    packages: [
-      .dependencies
-      | to_entries[]
-      | .value
-      | to_entries[]
-      | {
-          id: .key,
-          resolved: .value.resolved,
-          type: .value.type,
-          contentHash: .value.contentHash
-        }
-    ]
+    sourceLockFiles: $sourceLockFiles,
+    packages: (
+      [
+        $lockfiles[]
+        | .dependencies
+        | to_entries[]
+        | .value
+        | to_entries[]
+        | {
+            id: .key,
+            resolved: .value.resolved,
+            type: .value.type,
+            contentHash: .value.contentHash
+          }
+      ]
+      | unique_by(.id, .resolved)
+      | sort_by(.id, .resolved)
+    )
   }
-' "$LOCK_FILE" > "$FEED_DIR/offline-feed-manifest.json"
+' > "$FEED_DIR/offline-feed-manifest.json"
 
 echo
 echo "Offline feed complete."
